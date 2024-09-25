@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gráfico de Datos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+        }
+        canvas {
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Gráfico de Precio de Cierre</h2>
+    <canvas id="myChart" width="800" height="400"></canvas>
+    <script>
+        const ctx = document.getElementById('myChart').getContext('2d');
+
+        // Datos que se pasan desde el servidor
+        const data = {{{json data}}}; // Asegúrate de que 'data' se serializa correctamente en el servidor
+
+        const labels = data.map(d => d.date);
+        const prices = data.map(d => d.close);
+
+        const myChart = new Chart(ctx, {
+            type: 'line', // Tipo de gráfico
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Precio de Cierre',
+                    data: prices,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 2,
+                    fill: false,
+                    pointBackgroundColor: 'rgba(255, 255, 255, 1)', // Color de los puntos
+                    pointBorderColor: 'rgba(75, 192, 192, 1)', // Color del borde de los puntos
+                    pointRadius: 4,
+                    tension: 0.1 // Suaviza la línea
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permite que el gráfico ocupe el 100% de su contenedor
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                    },
+                    tooltip: {
+                        enabled: true,
+                        mode: 'index', // Muestra el tooltip por índice
+                        intersect: false // Permite mostrar el tooltip al pasar sobre cualquier punto
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Fecha'
+                        },
+                        ticks: {
+                            autoSkip: true, // Omite etiquetas para evitar superposición
+                            maxTicksLimit: 10 // Limita el número de ticks en el eje X
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Precio'
+                        },
+                        beginAtZero: false,
+                        ticks: {
+                            callback: function(value) {
+                                return '$' + value.toFixed(2); // Formato de moneda
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
